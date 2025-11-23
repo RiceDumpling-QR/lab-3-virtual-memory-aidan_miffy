@@ -6,13 +6,15 @@ int main() {
 
     std::cerr << "\n== Segfault Test ==\n";
 
-    unsigned long bad1 = 0x0;
-    unsigned long bad2 = 0xABCDEF;
+    // Access illegal low addresses
+    vm->pageLoadSingle(0x0, 0);
+    vm->pageLoadSingle(0x10, 0);
+    vm->pageStoreSingle(0x500, 0);
 
-    vm->pageLoadSingle(bad1, 0);
-    vm->pageStoreSingle(bad2, 0);
+    // Access unallocated high virtual region
+    vm->pageStoreSingle(0xABCDEF, 0);
 
-    std::cerr << "Accesses: " << vm->getNumAcc() << "\n";
-    std::cerr << "TLBHits: " << vm->getNumTlbHit() << "\n";
-    std::cerr << "PageFaults: " << vm->getNumPgFault() << "\n";
+    std::cerr << "\nAccesses:    " << vm->getNumAcc() << "\n";
+    std::cerr << "TLBHits:     " << vm->getNumTlbHit() << "\n";
+    std::cerr << "PageFaults:  " << vm->getNumPgFault() << "\n";
 }
